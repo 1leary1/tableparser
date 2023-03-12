@@ -1,32 +1,21 @@
 package org.example;
-
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.IOException;
 
 
 public class Main {
-    public static String standardUrl = "https://onedrive.live.com/redir?resid={resid}&authkey={authkey}&page=Download";
-    public static final String site = "https://www.ompec.ru/student/uchebnaya-deyatelnost/izmeneniya-v-raspisanii.php";
-    public static Elements aba;
+    private static final String site = "https://www.ompec.ru/student/uchebnaya-deyatelnost/izmeneniya-v-raspisanii.php";
+    private static String url;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Document page = ParseURL.getPageCode(site);
         Elements elements = page.select("iframe");
-        System.out.println(elements);
 
-        String resid = "";
-        String authkey = "";
+        url = ParseURL.GetURL(ParseURL.getResid(elements), ParseURL.getAuthkey(elements));
+        System.out.print(url);
 
-        Matcher residMatcher = Pattern.compile("resid=\\S*?&amp").matcher(String.valueOf(elements));
-        if (residMatcher.find()) resid = residMatcher.group().replace("resid=","");
-
-        Matcher authMatcher = Pattern.compile("authkey=\\S*?&amp").matcher(String.valueOf(elements));
-        if (authMatcher.find()) authkey = authMatcher.group().replace("authkey=","");
-
-        System.out.println("authkey бля = "+authkey+"\n"+ "resid нах = "+ resid);
-
+        Downloader.downloadFile(url, "file.xlsx");
     }
 }
